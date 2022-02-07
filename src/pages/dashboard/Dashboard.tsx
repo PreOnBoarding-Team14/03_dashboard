@@ -1,15 +1,12 @@
 import styled from 'styled-components';
+import Layout from './components/Layout';
 
 const Container = styled.div``;
 
-const ASAA = styled.span``;
 export default function Dashboard() {
   return (
     <Container>
-      <ASAA>asdasds</ASAA>
-      <ASAA>asdasds</ASAA>
-      <ASAA>asdasds</ASAA>
-      <div>asdasd</div>
+      <Layout />
     </Container>
   );
 }
