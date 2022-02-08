@@ -1,7 +1,9 @@
 const Theme = {
-  bgColor: '#F7F7F7',
-  subBgColor: '#C9C9C9',
-  pointColor: '#342F6A',
+  navColor: '#1565C0',
+  bgColor: '#E5E5E5',
+  pointColor: '#2196F3',
+  dateColor: '#939FA5',
+  borderColor: 'E5E5E5',
   font: "'Noto Sans KR', sans-serif",
 };
 
