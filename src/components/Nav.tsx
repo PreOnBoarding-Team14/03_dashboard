@@ -1,6 +1,7 @@
 import Modal from './Modal';
 import NavStyle from '../assets/styles/NavStyle';
-import { LOGO, WHITE_ICON, MENU } from 'assets/images';
+import { LOGO, WHITE_ICON } from 'assets/images';
+
 const {
   NavBar,
   LeftLogo,

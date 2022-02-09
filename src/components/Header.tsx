@@ -1,23 +1,7 @@
-import { useState, useEffect } from 'react';
+import { Toggle } from 'components';
+import { METHOD_LIST, MATERIAL_LIST } from '../utils/ConstantsSet';
 import { GRAY_ARROW, WHITE_ARROW, REFRESH } from '../assets/images/index';
 import HeaderStyle from 'assets/styles/HeaderStyle';
-import { Method, Material, Toggle } from 'components';
-
-interface IProps {
-  params: {
-    method?: string | undefined;
-    material?: string | undefined;
-    status?: string | undefined;
-  };
-  setParams: React.Dispatch<
-    React.SetStateAction<{
-      method?: string | undefined;
-      material?: string | undefined;
-      status?: string | undefined;
-    }>
-  >;
-  setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
-}
 
 const {
   Title,
@@ -37,121 +21,34 @@ const {
   Img,
 } = HeaderStyle;
 
-export default function Header({ params, setParams, setShowMenu }: IProps) {
-  const [showMethod, setShowMethod] = useState<boolean>(false);
-  const [showMaterial, setShowMaterial] = useState<boolean>(false);
-  const [method, setMethod] = useState<number[]>([]);
-  const [material, setMaterial] = useState<number[]>([]);
-  const [isClick, setIsClick] = useState<boolean>(false);
+interface IProps {
+  showMethod: boolean;
+  showMaterial: boolean;
+  methodArr: number[];
+  materialArr: number[];
+  onClick: (type: string) => void;
+  onChange: (type: string, idxNum: number) => void;
+}
 
-  const toggleClick = () => {
-    setIsClick(!isClick);
-  };
-
-  const methodClick = () => {
-    setShowMethod((curr) => !curr);
-    if (showMaterial) {
-      setShowMaterial(false);
-    }
-  };
-
-  const materialClick = () => {
-    setShowMaterial((curr) => !curr);
-    if (showMethod) {
-      setShowMethod(false);
-    }
-  };
-
-  const isRefreshClick = () => {
-    setMethod([]);
-    setMaterial([]);
-    setShowMaterial(false);
-    setShowMethod(false);
-  };
-
-  function onChangeMethod(i: number) {
-    if (method.includes(i)) {
-      const arr = method.filter((e) => e !== i);
-      arr.sort();
-      setMethod(arr);
-    } else {
-      const arr = [...method];
-      arr.push(i);
-      arr.sort();
-      setMethod(arr);
-    }
-  }
-
-  function onChangeMaterial(i: number) {
-    if (material.includes(i)) {
-      const arr = material.filter((e) => e !== i);
-      arr.sort();
-      setMaterial(arr);
-    } else {
-      const arr = [...material];
-      arr.push(i);
-      arr.sort();
-      setMaterial(arr);
-    }
-  }
-
-  useEffect(() => {
-    if (method.length) {
-      const temp = [];
-      for (let el of method) {
-        temp.push(Method[el]);
-      }
-      const param = temp.toString();
-      setParams({
-        ...params,
-        method: param,
-      });
-    } else {
-      delete params.method;
-      setParams({ ...params });
-    }
-  }, [method]);
-
-  useEffect(() => {
-    if (material.length) {
-      const temp = [];
-      for (let el of material) {
-        temp.push(Material[el]);
-      }
-      const param = temp.toString();
-      setParams({
-        ...params,
-        material: param,
-      });
-    } else {
-      delete params.material;
-      setParams({ ...params });
-    }
-  }, [material]);
-
-  useEffect(() => {
-    if (isClick) {
-      setParams({
-        ...params,
-        status: '상담중',
-      });
-    } else {
-      delete params.status;
-      setParams({ ...params });
-    }
-  }, [isClick]);
-
+export default function Header({
+  showMethod,
+  showMaterial,
+  methodArr,
+  materialArr,
+  onClick,
+  onChange,
+}: IProps) {
   return (
     <>
       <Title>들어온 요청</Title>
       <SubTitle>파트너님에게 딱 맞는 요청서를 찾아보세요.</SubTitle>
       <DropDownWrapper>
         <InnerFlex>
-          <BigDropDown Back={showMethod} onClick={methodClick}>
+          <BigDropDown Back={showMethod} onClick={() => onClick('method')}>
             <DropDownTitle>
               가공방식
-              {method.length > 0 && (
-                <DropDownCount>({method.length})</DropDownCount>
+              {methodArr.length > 0 && (
+                <DropDownCount>({methodArr.length})</DropDownCount>
               )}
             </DropDownTitle>
             <Arrow
@@ -159,11 +56,14 @@ export default function Header({ params, setParams, setShowMenu }: IProps) {
               alt="드롭 다운 화살표"
             />
           </BigDropDown>
-          <SmallDropDown Back={showMaterial} onClick={materialClick}>
+          <SmallDropDown
+            Back={showMaterial}
+            onClick={() => onClick('material')}
+          >
             <DropDownTitle>
               재료
-              {material.length > 0 && (
-                <DropDownCount>({material.length})</DropDownCount>
+              {materialArr.length > 0 && (
+                <DropDownCount>({materialArr.length})</DropDownCount>
               )}
             </DropDownTitle>
 
@@ -172,27 +72,27 @@ export default function Header({ params, setParams, setShowMenu }: IProps) {
               alt="드롭 다운 화살표"
             />
           </SmallDropDown>
-          {(material.length > 0 || method.length > 0) && (
-            <FilterReset onClick={isRefreshClick}>
+          {(materialArr.length > 0 || methodArr.length > 0) && (
+            <FilterReset onClick={() => onClick('refresh')}>
               <Img src={REFRESH} />
               필터링 리셋
             </FilterReset>
           )}
         </InnerFlex>
         <RightInnerFlex>
-          <Toggle toggleClick={toggleClick} />
+          <Toggle toggleClick={() => onClick('toggle')} />
         </RightInnerFlex>
       </DropDownWrapper>
       {showMethod && (
         <CheckBoxContainer>
-          {Method.map((e, i) => (
+          {METHOD_LIST.map((e, i) => (
             <CheckBoxWrapper key={i}>
               <CheckBox
                 type="checkbox"
                 id="scales"
                 name="scales"
-                defaultChecked={method.includes(i)}
-                onClick={() => onChangeMethod(i)}
+                defaultChecked={methodArr.includes(i)}
+                onClick={() => onChange('method', i)}
               />
               <label htmlFor="scales">{e}</label>
             </CheckBoxWrapper>
@@ -201,15 +101,15 @@ export default function Header({ params, setParams, setShowMenu }: IProps) {
       )}
       {showMaterial && (
         <CheckBoxContainer style={{ marginLeft: '105px' }}>
-          {Material.map((e, i) => (
+          {MATERIAL_LIST.map((e, i) => (
             <CheckBoxWrapper key={i}>
               <CheckBox
                 type="checkbox"
                 id="scales"
                 name="scales"
-                defaultChecked={material.includes(i)}
+                defaultChecked={materialArr.includes(i)}
                 onClick={() => {
-                  onChangeMaterial(i);
+                  onChange('material', i);
                 }}
               />
               <label htmlFor="scales">{e}</label>
