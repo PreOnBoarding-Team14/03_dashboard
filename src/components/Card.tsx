@@ -1,4 +1,4 @@
-import { IRequestInfoProps } from '../hooks';
+import { IRequestInfoProps } from 'utils/InterfaceSet';
 import { CardStyle } from '../assets/styles';
 
 interface Props {

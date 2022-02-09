@@ -3,28 +3,28 @@ import axios from 'axios';
 interface IArgsProps {
   url: string;
   method: string;
-  params: object;
+  params?: object;
 }
 
 class HttpUtil {
   async requestApi(args: IArgsProps) {
-    function getApi(url: string, params: object, method: string) {
+    function getApi(url?: string, method?: string, params?: object) {
       const body: object = {
-        url: url,
-        method: method,
+        url: !url ? '/requests' : url,
+        method: !method ? 'GET' : method,
       };
 
       // baseURL 옵션을 변경하거나 package.json 의 proxy 옵션을 넣어주면 됨.
       return axios({
         baseURL: 'https://dashboard-12313.herokuapp.com/',
         ...body,
-        params: params,
+        params: !params ? {} : params,
       })
         .then((res) => res)
         .catch((err) => err.response);
     }
 
-    const response = await getApi(args.url, args.params, args.method);
+    const response = await getApi(args.url, args.method, args.params);
     let msg: string = '';
 
     if (!response) msg = '데이터를 로드 할 수 없습니다.';
